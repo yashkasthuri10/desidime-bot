@@ -5,9 +5,14 @@ on:
     - cron: "*/15 * * * *"
   workflow_dispatch:
 
+# Prevent overlapping runs
 concurrency:
   group: scrape-deals
   cancel-in-progress: false
+
+# Grant write permission so git push works
+permissions:
+  contents: write
 
 jobs:
   scrape:
@@ -20,7 +25,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "22"
 
       - name: Install dependencies
         run: npm ci
