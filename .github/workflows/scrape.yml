@@ -1,8 +1,6 @@
 name: Scrape DesiDime Deals
 
 on:
-  schedule:
-    - cron: "3,18,33,48 * * * *"
   workflow_dispatch:
   repository_dispatch:
     types: [trigger-scraper]
