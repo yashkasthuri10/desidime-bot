@@ -26,7 +26,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "22"
-          cache: "npm" 
+          cache: "npm" # This caches the Node_modules to speed up npm ci
 
       - name: Install dependencies
         run: npm ci
@@ -36,11 +36,13 @@ jobs:
         id: playwright-cache
         with:
           path: ~/.cache/ms-playwright
-          key: ${{ runner.os }}-playwright-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ runner.os }}-playwright-${{ env.PLAYWRIGHT_VERSION }}-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-playwright-
 
       - name: Install Playwright browsers
+        # Playwright will skip downloading the binaries if they are restored from the cache.
+        # It will still execute slightly to install necessary OS dependencies (--with-deps).
         run: npx playwright install chromium --with-deps
 
       - name: Run scraper
@@ -55,5 +57,5 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add posted.json
-          git diff --cached --quiet || git commit -m "Update posted deals [skip ci]"
+          git diff --cached --quiet || git commit -m "Update posted deals"
           git push
